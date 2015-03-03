@@ -259,11 +259,25 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    _.each(arguments, function(eachObject){
+      _.each(eachObject, function(value, key) {
+        obj[key] = eachObject[key];
+      })
+    })
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    _.each(arguments, function(eachObject){
+      _.each(eachObject, function(value, key) {
+        if (obj[key] === undefined){
+          obj[key] = eachObject[key];
+        }
+      })
+    })
+    return obj;
   };
 
 
@@ -307,6 +321,25 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var alreadyCalled = false;
+    var result;
+    var args = arguments;
+
+    // TIP: We'll return a new function that delegates to the old one, but only
+    // if it hasn't been called before.
+    return function() {
+      if (args !== arguments) {
+        alreadyCalled = false;
+      }
+      if (!alreadyCalled) {
+        // TIP: .apply(this, arguments) is the standard way to pass on all of the
+        // infromation from one function call to another.
+        result = func.apply(this, arguments);
+        alreadyCalled = true;
+      }
+      // The new function always returns the originally computed result.
+      return result;
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls
