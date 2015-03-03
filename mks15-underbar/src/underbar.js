@@ -323,14 +323,20 @@
   _.memoize = function(func) {
     var alreadyCalled = false;
     var result;
-    var args = arguments;
+    var args;
 
     // TIP: We'll return a new function that delegates to the old one, but only
     // if it hasn't been called before.
     return function() {
-      if (args !== arguments) {
-        alreadyCalled = false;
+      args = args || arguments;
+
+      for (var i = 0; i < args.length; i++){
+        if (args[i] !== arguments[i]){
+          alreadyCalled = false;
+          break;
+        }
       }
+      
       if (!alreadyCalled) {
         // TIP: .apply(this, arguments) is the standard way to pass on all of the
         // infromation from one function call to another.
@@ -349,6 +355,17 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    //setTimeout for func with wait as out time.
+    //loop that pushes arguments into array. 
+    var argArray = [];
+    for(var i = 2; i < arguments.length; i++){
+      argArray.push(arguments[i]);
+    }
+
+    setTimeout(function(){
+      func.apply(this, argArray);
+    }, wait);
+    //any arguments equal or beyond the 2nd index are the arguments. 
   };
 
 
@@ -363,6 +380,21 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    //create an array that stores random stuff
+    var randArray = [];
+    var usedIndexes = [];
+    //select a random number and set it as index
+    //check if that index has been used already
+    //if not, push to randArray
+    while (array.length !== randArray.length) {
+      var index = Math.floor(Math.random() * array.length);
+      if (!_.contains(usedIndexes, index)){
+        randArray.push(array[index]);
+        usedIndexes.push(index);
+      }
+    }
+    return randArray;
+    //return that array
   };
 
 
@@ -377,6 +409,25 @@
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
+    //run each on the collection
+    var arr = [];
+
+    //check if functionOrKey is string. then parse. else ignore.
+    console.log(functionOrKey);
+    if (typeof functionOrKey === 'string'){
+      _.each(collection, function(item){
+        arr.push(item[functionOrKey].apply(item, collection));
+      });
+    } else {
+      //obj.key obj["key"]
+      _.each(collection, function(item){
+        arr.push(functionOrKey.apply(item, collection));
+      });
+      // return functionOrKey.apply(args, collection);
+    }
+    console.log(arr);
+    
+    return arr;
   };
 
   // Sort the object's values by a criterion produced by an iterator.
