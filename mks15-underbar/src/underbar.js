@@ -434,17 +434,11 @@
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
-    var results = [];
-    var sortArray = [];
-
-    console.log(iterator);
     if (typeof iterator === 'string'){
       collection.sort(function(a, b){ return a[iterator] - b[iterator]; });
     } else {
       collection.sort(function(a, b){ return iterator(a) - iterator(b); });
     }
-
-    console.log(collection);
     return collection;
   };
 
@@ -454,6 +448,19 @@
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
   _.zip = function() {
+    //Make a new array for each index. Each array contains only the elements at a single index.
+    //can also handle arrays of different lengths. 
+    var results = [];
+
+
+    for(var i = 0; i < arguments.length; i++){
+      var temp = [];
+      for(var j = 0; j < arguments[0].length; j++){
+        temp.push(arguments[j][i]);
+      }
+      results.push(temp);
+    }
+    return results;
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
@@ -461,6 +468,20 @@
   //
   // Hint: Use Array.isArray to check if something is an array
   _.flatten = function(nestedArray, result) {
+    var results = [];
+
+    var loopArray = function(array) {
+      for (var i = 0; i < array.length; i++) {
+        if (Array.isArray(array[i])) {
+          loopArray(array[i]);
+        } else {
+          results.push(array[i]);
+        }
+      }
+    }
+
+    loopArray(nestedArray);
+    return results;
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
