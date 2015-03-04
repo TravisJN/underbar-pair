@@ -413,7 +413,7 @@
     var arr = [];
 
     //check if functionOrKey is string. then parse. else ignore.
-    console.log(functionOrKey);
+   
     if (typeof functionOrKey === 'string'){
       _.each(collection, function(item){
         arr.push(item[functionOrKey].apply(item, collection));
@@ -425,7 +425,6 @@
       });
       // return functionOrKey.apply(args, collection);
     }
-    console.log(arr);
     
     return arr;
   };
@@ -435,6 +434,18 @@
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+    var results = [];
+    var sortArray = [];
+
+    console.log(iterator);
+    if (typeof iterator === 'string'){
+      collection.sort(function(a, b){ return a[iterator] - b[iterator]; });
+    } else {
+      collection.sort(function(a, b){ return iterator(a) - iterator(b); });
+    }
+
+    console.log(collection);
+    return collection;
   };
 
   // Zip together two or more arrays with elements of the same index
